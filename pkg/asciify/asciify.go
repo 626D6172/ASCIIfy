@@ -26,7 +26,6 @@ func SoftASCII(r io.Reader) error {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(tHeight, tWidth)
 
 	bounds := img.Bounds()
 	width := bounds.Max.X
