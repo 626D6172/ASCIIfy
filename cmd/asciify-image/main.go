@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"os"
 	"time"
@@ -19,8 +18,7 @@ const shade = " .:coPO?@#"
 func main() {
 	file, err := os.Open(os.Args[1]) // Replace with your image file path
 	if err != nil {
-		fmt.Println("Error opening image:", err)
-		return
+		panic(err)
 	}
 	defer file.Close()
 
