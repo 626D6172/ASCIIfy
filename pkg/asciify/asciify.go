@@ -3,17 +3,12 @@ package asciify
 
 import (
 	"image"
-	"io"
 	"math"
-	"os"
-	"time"
 
 	_ "image/jpeg"
 	_ "image/png"
 
-	"github.com/gosuri/uilive"
 	"github.com/nfnt/resize"
-	"golang.org/x/term"
 )
 
 const SHADER = " .:coPO?@#"
@@ -36,24 +31,10 @@ func ResizeImage(m image.Image, w uint, h uint) image.Image {
 	return resize.Thumbnail(w, h, m, resize.Lanczos3)
 }
 
-func SoftASCII(r io.Reader) error {
-	img, _, err := image.Decode(r)
-	if err != nil {
-		return err
-	}
-
-	w, h, err := term.GetSize(int(os.Stdin.Fd()))
-	if err != nil {
-		return err
-	}
-
+func ImageToASCIIToBuf(img image.Image, w int, h int, buf []byte) {
 	img = ResizeImage(img, uint(w/2), uint(h))
 
 	bounds := img.Bounds()
-	buf := CreateScreenBuffer(w, h)
-	screen := uilive.New()
-	screen.RefreshInterval = time.Millisecond * 200
-	screen.Start()
 
 	for y := range h {
 		for x := 0; x < w; x += 2 {
@@ -73,9 +54,4 @@ func SoftASCII(r io.Reader) error {
 			buf[(y*w)+x+1] = SHADER[lum]
 		}
 	}
-
-	screen.Write(buf)
-	screen.Stop()
-
-	return nil
 }
