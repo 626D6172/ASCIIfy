@@ -2,11 +2,9 @@
 A simple tool and package that allows folks to easily turn image data into fun ascii art.
 
 # Example
-`go run cmd/asciify/main.go images/vintage-clipart-oktopus-krake.png`
+`go run cmd/asciify-image/main.go images/vintage-clipart-oktopus-krake.png`
 
 ```
-                                                            
-                                                            
                   ..                                        
                     ::::            ..cc::                  
                   ::  ::cc..        PP    ::                
@@ -42,9 +40,4 @@ A simple tool and package that allows folks to easily turn image data into fun a
                       ::..  ::..  ::cccc                    
                         ..::        ..cc                    
                                   ::..                      
-```
-
-```
-```
-```
 ```
