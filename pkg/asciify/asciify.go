@@ -11,10 +11,26 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
+	"github.com/nfnt/resize"
 	"golang.org/x/term"
 )
 
 const SHADER = " .:coPO?@#"
+
+func ResizeImage(m image.Image, w uint, h uint) image.Image {
+	bounds := m.Bounds()
+	imageWidth := bounds.Max.X
+	imageHeight := bounds.Max.Y
+
+	var newImage image.Image
+	if imageWidth > imageHeight {
+		newImage = resize.Resize(w, 0, m, resize.Lanczos3)
+	} else {
+		newImage = resize.Resize(0, h, m, resize.Lanczos3)
+	}
+
+	return newImage
+}
 
 func SoftASCII(r io.Reader) error {
 	img, _, err := image.Decode(r)
@@ -22,40 +38,32 @@ func SoftASCII(r io.Reader) error {
 		return err
 	}
 
-	tWidth, tHeight, err := term.GetSize(int(os.Stdin.Fd()))
+	w, h, err := term.GetSize(int(os.Stdin.Fd()))
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	bounds := img.Bounds()
+	m := ResizeImage(img, uint(w/2), uint(h))
+
+	bounds := m.Bounds()
 	width := bounds.Max.X
 	height := bounds.Max.Y
 
-	widthRatio := width / tWidth
-	heightRatio := height / tHeight
+	fmt.Println(width, height, w, h)
 
-	ratio := max(heightRatio, widthRatio)
-
-	for y := bounds.Min.Y; y < height; y += ratio {
-		for x := bounds.Min.X; x < width; x += ratio {
-			totalLum := 0
-			sampleCount := 0
-			for i := range ratio {
-				for ii := range ratio {
-					sampleCount++
-					c := img.At(x+i, y+ii)
-					r, g, b, _ := c.RGBA()
-					// Calc lum https://en.wikipedia.org/wiki/Relative_luminance
-					rf := 0.2126 * float64(r)
-					gf := 0.7152 * float64(g)
-					bf := 0.0722 * float64(b)
-					totalLum += int(math.Floor(((rf + gf + bf) / 0xffff) * float64(len(SHADER)-1)))
-				}
-			}
-			if sampleCount == 0 {
+	for y := range h {
+		for x := range w {
+			if x >= width {
 				continue
 			}
-			fmt.Print(string(SHADER[totalLum/sampleCount]), string(SHADER[totalLum/sampleCount]))
+			c := m.At(x, y)
+			r, g, b, _ := c.RGBA()
+			// Calc lum https://en.wikipedia.org/wiki/Relative_luminance
+			rf := 0.2126 * float64(r)
+			gf := 0.7152 * float64(g)
+			bf := 0.0722 * float64(b)
+			lum := int(math.Floor(((rf + gf + bf) / 0xffff) * float64(len(SHADER)-1)))
+			fmt.Print(string(SHADER[lum]), string(SHADER[lum]))
 		}
 		fmt.Print("\n")
 	}
