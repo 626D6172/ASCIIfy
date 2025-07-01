@@ -2,6 +2,9 @@
 A simple tool and package that allows folks to easily turn image data into fun ascii art.
 
 # Example
+@Todo Package examples
+
+## Convert Images
 `go run cmd/asciify-image/main.go images/vintage-clipart-oktopus-krake.png`
 
 ```
@@ -41,3 +44,8 @@ A simple tool and package that allows folks to easily turn image data into fun a
                         ..::        ..cc                    
                                   ::..                      
 ```
+
+## Convert Video
+`go run cmd/asciify-video/main.go ~/Downloads/videoplayback.mp4`
+
+![Silly Dancing Man](https://raw.githubusercontent.com/626D6172/repo_assets/refs/heads/main/output.gif)
