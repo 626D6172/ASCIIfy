@@ -38,20 +38,22 @@ func ImageToASCIIToBuf(img image.Image, w int, h int, buf []byte) {
 
 	for y := range h {
 		for x := 0; x < w; x += 2 {
-			c := img.At(x/2, y)
-			if x/2 > bounds.Max.X {
-				buf[(y*w)+x] = SHADER[0]
-				buf[(y*w)+x+1] = SHADER[0]
-				continue
-			}
-			r, g, b, _ := c.RGBA()
-			// Calc lum https://en.wikipedia.org/wiki/Relative_luminance
-			rf := 0.2126 * float64(r)
-			gf := 0.7152 * float64(g)
-			bf := 0.0722 * float64(b)
-			lum := int(math.Floor(((rf + gf + bf) / 0xffff) * float64(len(SHADER)-1)))
-			buf[(y*w)+x] = SHADER[lum]
-			buf[(y*w)+x+1] = SHADER[lum]
+			go func(x, y int) {
+				c := img.At(x/2, y)
+				if x/2 > bounds.Max.X {
+					buf[(y*w)+x] = SHADER[0]
+					buf[(y*w)+x+1] = SHADER[0]
+					return
+				}
+				r, g, b, _ := c.RGBA()
+				// Calc lum https://en.wikipedia.org/wiki/Relative_luminance
+				rf := 0.2126 * float64(r)
+				gf := 0.7152 * float64(g)
+				bf := 0.0722 * float64(b)
+				lum := int(math.Floor(((rf + gf + bf) / 0xffff) * float64(len(SHADER)-1)))
+				buf[(y*w)+x] = SHADER[lum]
+				buf[(y*w)+x+1] = SHADER[lum]
+			}(x, y)
 		}
 	}
 }
