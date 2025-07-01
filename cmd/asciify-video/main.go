@@ -30,16 +30,30 @@ func main() {
 	}
 
 	screen := uilive.New()
-	screen.RefreshInterval = time.Millisecond * 100
+	screen.RefreshInterval = time.Millisecond * 50
 	screen.Start()
-	buf := asciify.CreateScreenBuffer(w, h)
+	c := make(chan []byte, 5)
+	go func() {
+		buf := asciify.CreateScreenBuffer(w, h)
 
-	screen.Write(buf)
-	for video.Read() {
-		asciify.ImageToASCIIToBuf(img, w, h, buf)
 		screen.Write(buf)
+
+		for video.Read() {
+			asciify.ImageToASCIIToBuf(img, w, h, buf)
+			c <- buf
+		}
+		close(c)
+	}()
+
+	ticker := time.NewTicker(time.Millisecond * time.Duration(1000/video.FPS()))
+	for {
+		b, ok := <-c
+		if !ok {
+			break
+		}
+		<-ticker.C
+		screen.Write(b)
 		screen.Flush()
 	}
-
 	screen.Stop()
 }
