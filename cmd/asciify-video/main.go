@@ -36,8 +36,6 @@ func main() {
 	go func() {
 		buf := asciify.CreateScreenBuffer(w, h)
 
-		screen.Write(buf)
-
 		for video.Read() {
 			asciify.ImageToASCIIToBuf(img, w, h, buf)
 			c <- buf
