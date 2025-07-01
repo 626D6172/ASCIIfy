@@ -37,8 +37,8 @@ func ImageToASCIIToBuf(img image.Image, w int, h int, buf []byte) {
 	bounds := img.Bounds()
 
 	for y := range h {
-		for x := 0; x < w; x += 2 {
-			go func(x, y int) {
+		go func(y int) {
+			for x := 0; x < w; x += 2 {
 				c := img.At(x/2, y)
 				if x/2 > bounds.Max.X {
 					buf[(y*w)+x] = SHADER[0]
@@ -53,7 +53,7 @@ func ImageToASCIIToBuf(img image.Image, w int, h int, buf []byte) {
 				lum := int(math.Floor(((rf + gf + bf) / 0xffff) * float64(len(SHADER)-1)))
 				buf[(y*w)+x] = SHADER[lum]
 				buf[(y*w)+x+1] = SHADER[lum]
-			}(x, y)
-		}
+			}
+		}(y)
 	}
 }
