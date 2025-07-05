@@ -8,8 +8,8 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
-	"github.com/626d6172/ascii-render/pkg/asciify"
 	vidio "github.com/AlexEidt/Vidio"
+	"github.com/bmarse/ascii-render/pkg/asciify"
 	"github.com/gosuri/uilive"
 	"golang.org/x/term"
 )

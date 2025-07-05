@@ -11,7 +11,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-const SHADER = " .:coPO?@#"
+const SHADER = "  .:coPO?@#"
 
 func CreateScreenBuffer(w int, h int) []byte {
 	buf := make([]byte, h*(w+1))

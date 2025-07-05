@@ -1,4 +1,4 @@
-module github.com/626d6172/ascii-render
+module github.com/bmarse/ascii-render
 
 go 1.23.0
 
